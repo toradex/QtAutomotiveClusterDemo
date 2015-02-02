@@ -16,6 +16,11 @@ INCLUDEPATH += ./GeneratedFiles \
     ./GeneratedFiles/Release
 PRECOMPILED_HEADER = StdAfx.h
 
+nomcc {
+} else {
+    LIBS += -lmcc
+}
+
 DEPENDPATH += .
 MOC_DIR = .build
 OBJECTS_DIR = .build
@@ -48,7 +53,13 @@ OTHER_FILES += \
     QtAutomotiveClusterDemoDesign/RpmDial.qml \
     QtAutomotiveClusterDemoDesign/SpeedDial.qml \
     QtAutomotiveClusterDemoDesign/FuelMeter.qml \
-    QtAutomotiveClusterDemoDesign/qml.qml
+    QtAutomotiveClusterDemoDesign/qml.qml \
+    QtAutomotiveClusterDemoDesign/qml_800x480.qml \
+    QtAutomotiveClusterDemoDesign/qml_1024x600.qml \
+    QtAutomotiveClusterDemoDesign/SmallRoundButton.qml \
+    QtAutomotiveClusterDemoDesign/RoundButton.qml \
+    QtAutomotiveClusterDemoDesign/ProgressBar.qml \
+    QtAutomotiveClusterDemoDesign/ProgressBarLabel.qml
 
 #OTHER_FOLDER += QtAutomotiveClusterDemoDesign
 
@@ -67,3 +78,7 @@ unix {
     INSTALLS += target \
         qml \
 }
+
+HEADERS +=
+
+SOURCES +=

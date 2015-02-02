@@ -65,12 +65,12 @@ Rectangle {
     y: 0
     width: 1024
     height: 600
-    color: "#0b0404"
+    color: "#0b0303"
     radius: 0
     gradient: Gradient {
         GradientStop {
             position: 0.675
-            color: "#0b0303"
+            color: "#0c0303"
         }
 
         GradientStop {
@@ -318,7 +318,7 @@ Rectangle {
 
     Timer{
         id: leftTurn
-        interval: 300
+        interval: 1000
         running: false
         repeat: true
         onTriggered: {
@@ -334,7 +334,7 @@ Rectangle {
 
     Timer{
         id: rightTurn
-        interval: 300
+        interval: 1000
         running: false
         repeat: true
         onTriggered: {
@@ -415,6 +415,72 @@ Rectangle {
             }
         }
     }
+
+
+    SmallRoundButton {
+        property bool isCpuLoadActive;
+        x: 453
+        y: 375
+        id: loadButton
+        upperColor: "#6d6d6d"
+        lowerColor: "#4a4a4a"
+        borderColor: "#dadada"
+        buttonLabel: "STRESS<br>CPU"
+
+        onButtonClick: {
+            isCpuLoadActive = !isCpuLoadActive;
+            cpuInfo.setCpuLoadActive(isCpuLoadActive);
+
+            if(isCpuLoadActive)
+                buttonLabel = "STRESS<br>OFF"
+            else
+                buttonLabel = "STRESS<br>CPU"
+
+        }
+    }
+
+    Row {
+        x: 20
+        y: 511
+        width: 984
+        height: 35
+
+        ProgressBarLabel {
+            id: cpuLoadText
+            textLabel: "CPU-Load"
+            text: "0%"
+            color: "#5c680e"
+        }
+    }
+
+    Row {
+        y: 492
+        height: 30
+        anchors.horizontalCenterOffset: 0
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: parent.width - 40
+
+
+        ProgressBar {
+            id: progressBarCpu
+            width: parent.width
+            border.color: "#cfcfcf"
+            progressFillImage: "qrc:///progressbar_green.png"
+            borderColor: "#99ac1c"
+        }
+
+    }
+
+    Timer {
+        interval: 300; running: true; repeat: true;
+        onTriggered: {
+            var load = cpuInfo.getCpuLoad();
+            cpuLoadText.text = load.toFixed(0) + "%";
+            progressBarCpu.progress = load;
+        }
+
+    }
+
     // engine start and stop button with flipable property
     Flipable {
          id: flipable
@@ -424,9 +490,9 @@ Rectangle {
 
          property bool flipped: false
          x: 476
-         y: 361
+         y: 286
 
-         front: Image { anchors.verticalCenterOffset: 6; anchors.horizontalCenterOffset: 1; source: "pics/Engine_start_stop_inactive.png"; anchors.centerIn: parent }
+         front: Image { anchors.verticalCenterOffset: -1; anchors.horizontalCenterOffset: 1; source: "pics/Engine_start_stop_inactive.png"; anchors.centerIn: parent }
          back: Image { source: "pics/Engine_start_stop_active.png"; anchors.centerIn: parent }
 
          transform: Rotation {
@@ -449,9 +515,9 @@ Rectangle {
 
          MouseArea {
              anchors.rightMargin: 0
-             anchors.bottomMargin: -3
+             anchors.bottomMargin: 1
              anchors.leftMargin: 1
-             anchors.topMargin: 3
+             anchors.topMargin: -1
              anchors.fill: parent
              onClicked:{ flipable.flipped = !flipable.flipped
                  startFlag = !startFlag
@@ -464,6 +530,8 @@ Rectangle {
                      rpmAndspeedUpdate.running = true           // start rpmAndspeedUpdate timer
                      digitalSpeedUpdate.running = true          // start digitalSpeedUpdate timer
                      dummyAnimation.start()
+                     leftTurn.running = true
+                    rightTurn.running = true
                  }
                  if(startFlag == false)
                  {
@@ -474,8 +542,8 @@ Rectangle {
                      rpmAndspeedUpdate.running = false
                      digitalSpeedUpdate.running = true
                      dummyAnimation.stop()
-                      leftTurn.running = false
-                     rightTurn.running = false
+                      leftTurn.running = true
+                     rightTurn.running = true
                      rpm_dial.value = 0
                      speed_dial.value = 0
                      rpmValue = 0
@@ -734,9 +802,9 @@ Rectangle {
 
 Rectangle {
     id: digitRectangle
-    x: 420
+    x: 412
     y: 80
-    width: 162
+    width: 190
     height: 30
     color: "#00000000"
     radius: 25
@@ -775,13 +843,13 @@ Rectangle {
 
     Text {
         id: speedUnit
-        x: 82
-        y: 1
+        x: 122
+        y: 0
         color: "#04b5dc"
         text: "Km/h"
         smooth: true
         anchors.right: parent.right
-        anchors.rightMargin: 20
+        anchors.rightMargin: 8
         z: 9
         opacity: 1
         font.bold: false

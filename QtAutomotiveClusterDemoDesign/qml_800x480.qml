@@ -69,7 +69,7 @@ Rectangle {
     gradient: Gradient {
         GradientStop {
             position: 0.675
-            color: "#0a0404"
+            color: "#0c0303"
         }
 
         GradientStop {
@@ -370,6 +370,29 @@ Rectangle {
    }
 
     // speed dial import from speedDial qml
+    SmallRoundButton {
+        property bool isCpuLoadActive;
+        x: 215
+        y: 27
+        buttonLabel: "STRESS<br>CPU"
+        buttonSize: 83
+        id: loadButton
+        upperColor: "#6d6d6d"
+        lowerColor: "#4a4a4a"
+        borderColor: "#dadada"
+
+        onButtonClick: {
+            isCpuLoadActive = !isCpuLoadActive;
+            cpuInfo.setCpuLoadActive(isCpuLoadActive);
+
+            if(isCpuLoadActive)
+                buttonLabel = "STRESS<br>OFF"
+            else
+                buttonLabel = "STRESS<br>CPU"
+
+        }
+    }
+
     SpeedDial  {
         id: speed_dial
         x: 477
@@ -394,10 +417,11 @@ Rectangle {
     }
 
      // Fuel meter indicator from FuelMeter qml
+
     FuelMeter {
         id: fuelMeter1
         x: 321
-        y: 110
+        y: 122
         smooth: true
         value: fuelValue
         Timer{
@@ -414,6 +438,51 @@ Rectangle {
             }
         }
     }
+
+
+
+    Row {
+        x: 59
+        y: 431
+        width: 683
+        height: 35
+
+        ProgressBarLabel {
+            id: cpuLoadText
+            textLabel: "CPU-Load"
+            text: "0%"
+            color: "#5c680e"
+        }
+    }
+
+    Row {
+        y: 454
+        height: 30
+        anchors.horizontalCenterOffset: -4
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: parent.width - 40
+
+
+        ProgressBar {
+            id: progressBarCpu
+            width: parent.width
+            border.color: "#cfcfcf"
+            progressFillImage: "qrc:///progressbar_green.png"
+            borderColor: "#99ac1c"
+        }
+
+    }
+
+    Timer {
+        interval: 300; running: true; repeat: true;
+        onTriggered: {
+            var load = cpuInfo.getCpuLoad();
+            cpuLoadText.text = load.toFixed(0) + "%";
+            progressBarCpu.progress = load;
+        }
+
+    }
+
     // engine start and stop button with flipable property
     Flipable {
          id: flipable
@@ -422,10 +491,10 @@ Rectangle {
          z: 7
 
          property bool flipped: false
-         x: 375
-         y: 311
+         x: 368
+         y: 281
 
-         front: Image { source: "pics/Engine_start_stop_inactive.png"; anchors.centerIn: parent }
+         front: Image { anchors.verticalCenterOffset: 7; anchors.horizontalCenterOffset: 2; source: "pics/Engine_start_stop_inactive.png"; anchors.centerIn: parent }
          back: Image { source: "pics/Engine_start_stop_active.png"; anchors.centerIn: parent }
 
          transform: Rotation {
@@ -447,10 +516,10 @@ Rectangle {
          }
 
          MouseArea {
-             anchors.rightMargin: -2
-             anchors.bottomMargin: 0
-             anchors.leftMargin: 2
-             anchors.topMargin: 0
+             anchors.rightMargin: 0
+             anchors.bottomMargin: -1
+             anchors.leftMargin: 0
+             anchors.topMargin: 1
              anchors.fill: parent
              onClicked:{ flipable.flipped = !flipable.flipped
                  startFlag = !startFlag
@@ -512,8 +581,8 @@ Rectangle {
      }
     Image {
         id: turn_left
-        x: 335
-        y: 208
+        x: 325
+        y: 206
         smooth: true
         z: 6
         source: "pics/turn_indicator_left.png"
@@ -521,8 +590,8 @@ Rectangle {
 
     Image {
         id: turn_right
-        x: 419
-        y: 208
+        x: 420
+        y: 206
         smooth: true
         z: 6
         source: "pics/turn_indicator.png"

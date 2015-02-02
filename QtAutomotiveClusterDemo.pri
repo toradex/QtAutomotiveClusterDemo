@@ -8,9 +8,17 @@ message("You are running qmake on a generated .pro file. This may not work!")
 
 
 HEADERS += ./QtAutomotiveClusterDemo.h \
-    ./stdafx.h
+    ./stdafx.h \
+    cpuloadworker.h \
+    cpuinfo.h \
+    xypenplottercontroller.h \
+    $$PWD/gpio.h
 SOURCES += ./main.cpp \
     ./QtAutomotiveClusterDemo.cpp \
-    ./stdafx.cpp
+    ./stdafx.cpp \
+    cpuloadworker.cpp \
+    cpuinfo.cpp \
+    xypenplottercontroller.cpp \
+    $$PWD/gpio.cpp
 FORMS += ./QtAutomotiveClusterDemo.ui
 RESOURCES += ./QtAutomotiveClusterDemo.qrc

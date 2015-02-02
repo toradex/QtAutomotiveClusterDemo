@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 3.2.2, 2015-01-16T14:30:35. -->
+<!-- Written by QtCreator 3.1.2, 2014-09-24T14:45:21. -->
 <qtcreator>
- <data>
-  <variable>EnvironmentId</variable>
-  <value type="QByteArray">{8264cdc3-7137-4551-a7ef-17a551f50621}</value>
- </data>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
   <value type="int">1</value>
@@ -568,7 +564,7 @@
        <value type="QDateTime">2014-09-24T14:44:57</value>
        <value type="QDateTime">2014-09-24T14:44:56</value>
        <value type="QDateTime">2014-09-24T14:44:56</value>
-       <value type="QDateTime">2014-10-03T14:16:27</value>
+       <value type="QDateTime">2014-09-24T14:44:57</value>
        <value type="QDateTime">2014-09-24T14:44:57</value>
        <value type="QDateTime">2014-09-24T14:44:56</value>
        <value type="QDateTime">2014-09-24T14:44:56</value>
@@ -598,9 +594,9 @@
        <value type="QDateTime">2014-09-24T14:44:57</value>
        <value type="QDateTime">2014-09-24T14:44:56</value>
        <value type="QDateTime">2014-09-24T14:44:57</value>
-       <value type="QDateTime">2014-10-03T10:33:16</value>
+       <value type="QDateTime">2014-09-24T14:44:57</value>
        <value type="QDateTime">2014-09-24T14:44:56</value>
-       <value type="QDateTime">2014-10-03T10:33:16</value>
+       <value type="QDateTime">2014-09-24T14:44:57</value>
        <value type="QDateTime">2014-09-24T14:44:56</value>
        <value type="QDateTime">2014-09-24T14:44:56</value>
        <value type="QDateTime">2014-09-24T14:44:56</value>
@@ -658,9 +654,11 @@
     <value type="int" key="PE.EnvironmentAspect.Base">1</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">QtAutomotiveClusterDemo (on Remote Device)</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">QtAutomotiveClusterDemo (on Remote Device)2</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">RemoteLinuxRunConfiguration:/home/prjs/colibri_vf/QtProjects/QtAutomotiveClusterDemoLed-0.1_bkup/QtAutomotiveClusterDemo.pro</value>
-    <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.Arguments"/>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">RemoteLinuxRunConfiguration:/home/prjs/colibri_vf/QtProjects/QtAutomotiveClusterDemoLed-0.1/QtAutomotiveClusterDemo.pro</value>
+    <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.Arguments">
+     <value type="QString">-qws</value>
+    </valuelist>
     <value type="QString" key="Qt4ProjectManager.MaemoRunConfiguration.ProFile">QtAutomotiveClusterDemo.pro</value>
     <value type="QString" key="RemoteLinux.RunConfig.AlternateRemoteExecutable"></value>
     <value type="bool" key="RemoteLinux.RunConfig.UseAlternateRemoteExecutable">false</value>
@@ -680,11 +678,11 @@
   <value type="int">2</value>
  </data>
  <data>
-  <variable>ProjectExplorer.Project.Updater.FileVersion</variable>
-  <value type="int">16</value>
+  <variable>ProjectExplorer.Project.Updater.EnvironmentId</variable>
+  <value type="QByteArray">{8264cdc3-7137-4551-a7ef-17a551f50621}</value>
  </data>
  <data>
-  <variable>Version</variable>
-  <value type="int">16</value>
+  <variable>ProjectExplorer.Project.Updater.FileVersion</variable>
+  <value type="int">15</value>
  </data>
 </qtcreator>
