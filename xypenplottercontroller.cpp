@@ -1,4 +1,4 @@
-﻿#include "xypenplottercontroller.h"
+#include "xypenplottercontroller.h"
 #include <QDebug>
 #include <QTimer>
 #include <QProcess>
