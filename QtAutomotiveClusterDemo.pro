@@ -1,20 +1,6 @@
-# Check Qt >= 4.4
-#contains(QT_VERSION, ^4\.[0-3]\..*) {
-#    message("Cannot build Fotowall with Qt version $$QT_VERSION .")
-#    error("Use at least Qt 4.4.")
-#}
-#contains(QT_VERSION, ^4\.4\..*): message("Lots of features will be disabled with Qt $$QT_VERSION . Use Qt 4.6 or later.")
-#contains(QT_VERSION, ^4\.5\..*): message("Some features are not available with Qt $$QT_VERSION . Use Qt 4.6 or later.")
-
 # Project Options
 TEMPLATE = app
 TARGET = QtAutomotiveClusterDemo
-
-INCLUDEPATH += ./GeneratedFiles \
-    .build \
-    . \
-    ./GeneratedFiles/Release
-PRECOMPILED_HEADER = StdAfx.h
 
 nomcc {
 } else {
@@ -31,7 +17,6 @@ QT = core \
     svg \
     network \
     xml \
-    sql \
     declarative
 
 # use OpenGL where available
@@ -39,10 +24,7 @@ contains(QT_CONFIG, opengl)|contains(QT_CONFIG, opengles1)|contains(QT_CONFIG, o
     QT += opengl
 }
 
-# disable the Wordcloud appliance (for 0.9 release)
-DEFINES += NO_WORDCLOUD_APPLIANCE
-
-# Fotowall input files
+# QtAutomotiveClusterDemo input files
 include(QtAutomotiveClusterDemo.pri)
 
 
@@ -60,6 +42,7 @@ OTHER_FILES += \
     QtAutomotiveClusterDemoDesign/RoundButton.qml \
     QtAutomotiveClusterDemoDesign/ProgressBar.qml \
     QtAutomotiveClusterDemoDesign/ProgressBarLabel.qml
+
 
 #OTHER_FOLDER += QtAutomotiveClusterDemoDesign
 

@@ -2,9 +2,9 @@
 #define QtAutomotiveClusterDemo_H
 
 #include <QtGui/QMainWindow>
-#include "ui_QtAutomotiveClusterDemo.h"
+#include <QtGui>
 #include <QDeclarativeView>
- #include <QDeclarativeContext>
+#include <QDeclarativeContext>
 #include <QWidget>
 #include <QLayout>
 #include <QObject>
@@ -21,10 +21,7 @@ public:
 	~QtAutomotiveClusterDemo();
 
 public slots:
-	void buttonSlot(int signal);
-
-private:
-	Ui::QtAutomotiveClusterDemoClass ui;
+    void buttonSlot(int signal);
 };
 
 #endif // QtAutomotiveClusterDemo_H

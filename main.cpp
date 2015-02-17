@@ -1,5 +1,3 @@
-
-#include "stdafx.h"
 #include <unistd.h>
 #include "QtAutomotiveClusterDemo.h"
 #include <QtGui/QApplication>
