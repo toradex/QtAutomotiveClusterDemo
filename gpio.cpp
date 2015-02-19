@@ -5,140 +5,211 @@
 #include <QThread>
 #include <QProcess>
 #include <QVariant>
+#ifdef Q_WS_QWS
+#include <linux/mcc_config.h>
+#include <linux/mcc_common.h>
+#include <linux/mcc_linux.h>
+extern "C" {
+#include <mcc_api.h>
+}
+#include <stdint.h>
+
+
+#define MCC_NODE_A5 1
+#define MCC_NODE_M4 2
+
+#define SERVO_STATE_INVALID     (0)
+#define SERVO_STATE_CW          (1)
+#define SERVO_STATE_CCW         (2)
+#define SERVO_STATE_END         (3)
+
+
+MCC_ENDPOINT endpoint_a5 = {0,0,MCC_NODE_A5};
+MCC_ENDPOINT endpoint_m4 = {1,0,MCC_NODE_M4};
+
+
+int send_msg(msg_t *msg)
+{
+    int retval;
+
+    retval = mcc_send(&endpoint_m4, msg, sizeof(msg_t), 0xffffffff);
+    if(retval)
+        qDebug("mcc_send failed, result = 0x%x", retval);
+
+    return retval;
+}
+
+int receive_msg(msg_t *msg, int timeout)
+{
+    int retval, num_of_received_bytes;
+
+    retval = mcc_recv_copy(&endpoint_a5, msg, sizeof(msg_t), (MCC_MEM_SIZE *)&num_of_received_bytes, timeout);
+    if(retval)
+        qDebug("mcc_recv_copy failed, result = 0x%x",  retval);
+    return retval;
+}
+
+int GpioOnOff::initmcc()
+{
+    MCC_INFO_STRUCT info_data;
+    int retval = 0;
+    uint32_t node_num = endpoint_a5.node;
+
+    retval = mcc_initialize(node_num);
+    if(retval)
+        return retval;
+
+    retval = mcc_get_info(node_num, &info_data);
+    if(retval)
+        return retval;
+
+    qDebug("mcc version: %s", info_data.version_string);
+
+    return 0;
+}
+#else
+
+int GpioOnOff::initmcc()
+{
+    qDebug("no mcc");
+
+    return 0;
+}
+#endif
 
 
 void GpioOnOff::usleep(long iSleepTime)
 {
-          QThread::usleep(iSleepTime);
+    QThread::usleep(iSleepTime);
 }
 
 void GpioOnOff::msleep(long iSleepTime)
 {
-          QThread::msleep(iSleepTime);
+    QThread::msleep(iSleepTime);
 }
 
 void GpioOnOff::sleep(long iSleepTime)
 {
-          QThread::sleep(iSleepTime);
+    QThread::sleep(iSleepTime);
 }
 
+void GpioOnOff::schedprio(int val)
+{
+    struct sched_param param;
+    param.sched_priority = 80;
+    if(sched_setscheduler(0, SCHED_FIFO, &param) == -1) {
+        qWarning() << "Schedule setzten";
+        return;
+    }
+}
 
+void GpioOnOff::mccsendstart()
+{
+    int retval;
+
+    msg.data = SERVO_STATE_CW;
+    retval = send_msg(&msg);
+    if (retval)
+        qDebug() << "Error on mcc send start";
+}
 
 
 void GpioOnOff::run()
 {
-    qDebug("Loading firmware...");
+    int retval;
+    qDebug("Servo GPIO-PWM thread");
+
+    qDebug("Loading eCos firmware...");
     QProcess processMqx;
-    processMqx.start("mqxboot /home/root/plotter.bin 0x8f000400 0x0f000411");
-    processMqx.waitForFinished();
+    processMqx.start("mqxboot /home/root/servo.bin 0x8f000400 0x0f000411");
+    if (!processMqx.waitForFinished())
+        qWarning() << "mqxboot failed";
 
+    retval = initmcc();
+    if (retval) {
+        qDebug("Error during mcc_get_info, result = %d", retval);
+    }
 
-    qDebug() << "GPIO1";
-    QFile file("/sys/class/gpio/export");
-    file.open(QIODevice::WriteOnly | QIODevice::Text);
-    QTextStream out(&file);
+    /* Set realtime priority for the GPIO PWM thread */
+    schedprio(80);
+
+    QFile gpio_export_file("/sys/class/gpio/export");
+    gpio_export_file.open(QIODevice::WriteOnly | QIODevice::Text);
+    QTextStream out(&gpio_export_file);
     out << "66";
-    file.close();
-    qDebug() << "GPIO2";
+    gpio_export_file.close();
 
-    QFile gpio49_direction("/sys/class/gpio/gpio66/direction");
-    gpio49_direction.open(QIODevice::WriteOnly | QIODevice::Text);
-    QTextStream outGpio_Direction(&gpio49_direction);
+    QFile gpio_direction("/sys/class/gpio/gpio66/direction");
+    gpio_direction.open(QIODevice::WriteOnly | QIODevice::Text);
+    QTextStream outGpio_Direction(&gpio_direction);
     outGpio_Direction << "out";
-    gpio49_direction.close();
+    gpio_direction.close();
 
-    qDebug() << "GPIO3";
 
     QFile gpio_value("/sys/class/gpio/gpio66/value");
     gpio_value.open(QIODevice::WriteOnly | QIODevice::Text);
-    QTextStream St_gpio_value(&gpio_value);
-    St_gpio_value << "1";
-    gpio_value.close();
-    qDebug() << "GPIO4";
+    QTextStream st_gpio_value(&gpio_value);
+    st_gpio_value << "1";
 
+    int deg = 0;
     int count = 0;
-    int x = 1000;
-    int total = 40000;
-    int y = total - x;
+
+    int usperdeg = 11;
+    int period = 20000;
+
+    int minduty = 1000;
+    int maxduty = 2000;
+    int duty = minduty;
 
 
-
-    QVariant varX(x);
-    QString stringX = varX.toString();
-    qDebug() << "x :"+stringX;
-
+    servo_state = SERVO_STATE_END;
 
     while(1)
     {
-
-        y=total-x;
-
-        //Liga
-        QFile gpio_value4("/sys/class/gpio/gpio66/value");
-        gpio_value4.open(QIODevice::WriteOnly | QIODevice::Text);
-        QTextStream St_gpio_value4(&gpio_value4);
-        St_gpio_value4 << "1";
-        gpio_value4.close();
-        usleep(x);
-        //Desliga
-        QFile gpio_value5("/sys/class/gpio/gpio66/value");
-        gpio_value5.open(QIODevice::WriteOnly | QIODevice::Text);
-        QTextStream St_gpio_value5(&gpio_value5);
-        St_gpio_value5 << "0";
-        gpio_value5.close();
-        usleep(y);
-
         count++;
-        if(count >=60)
+
+        duty = minduty + deg * usperdeg;
+        if (duty > maxduty)
+            duty = maxduty;
+
+
+        st_gpio_value << "1";
+        st_gpio_value.flush();
+        usleep(duty);
+        st_gpio_value << "0";
+        st_gpio_value.flush();
+        usleep(period-duty);
+
+        switch (servo_state)
         {
-            count=0;
-            x= x + 1000;
-        }
-        if(x>2000)
-        {
-            x=1000 ;
+        case SERVO_STATE_CW:
+            /* Next step every 200ms */
+            if (count % 20)
+                break;
+
+            deg += 5;
+            if (deg >= 90) {
+                count = 0;
+                servo_state = SERVO_STATE_CCW;
+            }
+
+            break;
+
+        case SERVO_STATE_CCW:
+            deg = 0;
+            /* Wait for two seconds */
+            if (count > 100)
+                servo_state = SERVO_STATE_END;
+
+            break;
+        case SERVO_STATE_END:
+            mccsendstart();
+            servo_state = SERVO_STATE_CW;
+            break;
+        default:
+            /* Auto restart... */
+            servo_state = SERVO_STATE_END;
+            break;
         }
     }
-//        if(count <= periodo)
-//        {
-//            QFile gpio_value2("/sys/class/gpio/gpio66/value");
-//            gpio_value2.open(QIODevice::WriteOnly | QIODevice::Text);
-//            QTextStream St_gpio_value1(&gpio_value2);
-//            St_gpio_value1 << "1";
-//            gpio_value2.close();
-//        }
-//        else
-//        {
-//            QFile gpio_value3("/sys/class/gpio/gpio66/value");
-//            gpio_value3.open(QIODevice::WriteOnly | QIODevice::Text);
-//            QTextStream St_gpio_value3(&gpio_value3);
-//            St_gpio_value3 << "0";
-//            gpio_value3.close();
-//        }
-//        if(count >= duty)
-//        {
-//            count = 0;
-//        }
-//        else
-//        {
-//            count++;
-//        }
-//        if(change >= 1000)
-//        {
-//            change = 0;
-//            periodo++;
-//            periodo++;
-//            if(periodo >= 60)
-//            {
-//                periodo = 10;
-//                msleep(1000);
-//            }
-//        }
-//        else
-//        {
-//            change++;
-//        }
-//        msleep(1);
-//    }
-//    qDebug() << "CpuLoad Ended!";
 }

@@ -9,12 +9,13 @@
 #include <QTime>
 #include "cpuinfo.h"
 #include "gpio.h"
-#include "xypenplottercontroller.h"
 
 //#define RESOLUTION_1024x600
 
 int main(int argc, char *argv[])
 {
+    int ret;
+
 	QApplication a(argc, argv);
 	QDeclarativeView view, graphView;
 
@@ -23,24 +24,6 @@ int main(int argc, char *argv[])
 
     GpioOnOff gpio;
     gpio.start();
-
-
-//    XYPenPlotterController ppController;
-//    view.rootContext()->setContextProperty("ppController", &ppController);
-
-    sleep(3);
-
-    QProcess process2;
-    process2.start("export QWS_DISPLAY=\"LinuxFb:/dev/fb:genericcolors\"");
-    process2.waitForFinished();
-
-    QProcess process3;
-    process3.start("export QWS_KEYBOARD=\"USB:/dev/input/event-keyboard\"");
-    process3.waitForFinished();
-
-    QProcess process4;
-    process4.start("export QWS_MOUSE_PROTO=\"USB:/dev/input/event-mouse\"");
-    process4.waitForFinished();
 
     QString branch = qApp->applicationDirPath();
     QtAutomotiveClusterDemo w;
@@ -55,8 +38,11 @@ int main(int argc, char *argv[])
 
 #endif
 	//view.setWindowFlags(Qt::FramelessWindowHint | Qt::Window);					// this statement can make the window frameless
-    //view.isFullScreen();
     view.showFullScreen();
 	//w.showMaximized();
-    return a.exec();
+    ret = a.exec();
+
+    gpio.terminate();
+
+    return ret;
 }
