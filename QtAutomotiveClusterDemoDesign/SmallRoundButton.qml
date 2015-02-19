@@ -24,7 +24,7 @@ Rectangle {
             anchors.centerIn: parent
             horizontalAlignment: Text.AlignHCenter;
             text: buttonLabel
-            font.pixelSize: 20
+            font.pixelSize: 14
             font.bold: true
             font.capitalization: Font.AllUppercase
             style: Text.Sunken

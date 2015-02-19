@@ -1,4 +1,7 @@
 <RCC>
-    <qresource prefix="QtAutomotiveClusterDemo">
+    <qresource prefix="/QtAutomotiveClusterDemo"/>
+    <qresource prefix="/">
+        <file>label.png</file>
+        <file>progressbar_green.png</file>
     </qresource>
 </RCC>

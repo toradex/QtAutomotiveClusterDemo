@@ -79,7 +79,7 @@ Rectangle {
 
         GradientStop {
             position: 0.954
-            color: "#1acb81"
+            color: "#407e01"
         }
 
     }
@@ -278,7 +278,6 @@ Rectangle {
             {
                 rpmValue = 60;
                 speedValue = speedValue - 3
-                indicatorflash.running = true
                 gear = 4
             }
             rpmValue = rpmValue + 1.5
@@ -375,7 +374,7 @@ Rectangle {
         x: 215
         y: 27
         buttonLabel: "STRESS<br>CPU"
-        buttonSize: 83
+        buttonSize: 85
         id: loadButton
         upperColor: "#6d6d6d"
         lowerColor: "#4a4a4a"
@@ -813,36 +812,33 @@ Rectangle {
 
     Text {
         id: digitalSpeed
-        y: -1
-        color: "#03bee7"
+        y: 3
+        color: "#04b4db"
         text: speedValue
         smooth: true
         anchors.left: parent.left
-        anchors.leftMargin: 15
+        anchors.leftMargin: 25
         z: 11
         opacity: 1
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        font.family: "Verdana"
+        font.family: "Arial"
         style: Text.Sunken
         font.bold: false
-        font.pixelSize: 25
-        Timer{
-            id:digitalSpeedUpdate
+        font.pixelSize: 20
+
+        Timer {
+            id: digitalSpeedUpdate
             interval: 200
             running: false
             repeat: true
             onTriggered: {
                 digitalSpeed.text = (speedValue + (2 * speedValue/10)).toFixed(1)
             }
-
         }
     }
 
     Text {
         id: speedUnit
-        x: 82
-        y: 1
+        y: 3
         color: "#04b4db"
         text: "Km/h"
         smooth: true
@@ -850,10 +846,10 @@ Rectangle {
         anchors.rightMargin: 20
         z: 9
         opacity: 1
-        font.bold: false
         style: Text.Sunken
+        font.bold: false
         font.family: "Arial"
-        font.pixelSize: 25
+        font.pixelSize: 20
     }
 }
 
