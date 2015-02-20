@@ -27,6 +27,9 @@ extern "C" {
 MCC_ENDPOINT endpoint_a5 = {0,0,MCC_NODE_A5};
 MCC_ENDPOINT endpoint_m4 = {1,0,MCC_NODE_M4};
 
+// GPIO 38 => SO-DIMM 63 => Viola X9, Pin 18
+#define PWM_GPIO    "38"
+
 
 int send_msg(msg_t *msg)
 {
@@ -136,17 +139,17 @@ void GpioOnOff::run()
     QFile gpio_export_file("/sys/class/gpio/export");
     gpio_export_file.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream out(&gpio_export_file);
-    out << "66";
+    out << PWM_GPIO;
     gpio_export_file.close();
 
-    QFile gpio_direction("/sys/class/gpio/gpio66/direction");
+    QFile gpio_direction("/sys/class/gpio/gpio" PWM_GPIO "/direction");
     gpio_direction.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream outGpio_Direction(&gpio_direction);
     outGpio_Direction << "out";
     gpio_direction.close();
 
 
-    QFile gpio_value("/sys/class/gpio/gpio66/value");
+    QFile gpio_value("/sys/class/gpio/gpio" PWM_GPIO "/value");
     gpio_value.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream st_gpio_value(&gpio_value);
     st_gpio_value << "1";
