@@ -239,14 +239,54 @@ Rectangle {
         NumberAnimation{target: turn_right; property: "opacity"; to: 0.1; duration: 150}
     }
 
+    function startStopAnimation()
+    {
+        flipable.flipped = !flipable.flipped
+        startFlag = !startFlag
+        if(startFlag == true)
+        {
+            indicatorAnimateFocus.stop()               // stop indicator animation
+            dialEffectStop.stop()                      // stop dial animation
+            dialEffectStart.start()                    // start dial effect animation
+            indicatorAnimatedDim.start()               // startindictor effect animation
+            rpmAndspeedUpdate.running = true           // start rpmAndspeedUpdate timer
+            digitalSpeedUpdate.running = true          // start digitalSpeedUpdate timer
+            dummyAnimation.start()
+        }
+        if(startFlag == false)
+        {
+            dialEffectStart.stop()                     // stop dial effect animation
+            indicatorAnimatedDim.stop()                // stop indicator animation
+            indicatorAnimateFocus.start()              // start indicator focus annimation
+            dialEffectStop.start()                     // start dial effect stop animation
+            rpmAndspeedUpdate.running = false
+            digitalSpeedUpdate.running = true
+            dummyAnimation.stop()
+             leftTurn.running = false
+            rightTurn.running = false
+            rpm_dial.value = 0
+            speed_dial.value = 0
+            rpmValue = 0
+            speedValue = 0
+            oil.visible = 0
+            fuelLeak.visible = 0
+            brake.visible = 0
+            battery.visible = 0
+        }
+
+        rpmOverlay.visible = startFlag
+        speedOverlay.visible = startFlag
+
+    }
+
     // feed dummy data to speedometer and rpm meter
     function rpmSpeedMeter()
     {
         rpm_dial.value = rpmValue
         speed_dial.value = speedValue
         if(gear == 0){
-        rpmValue = rpmValue + 5
-        speedValue = speedValue + 2
+            rpmValue = rpmValue + 5
+            speedValue = speedValue + 2
             gear = 1
         }
         else if(gear == 1){
@@ -299,6 +339,7 @@ Rectangle {
         }
         if(speedValue >100)
         {
+            startStopAnimation();
             rpmValue = speedValue = gear = 0
         }
     }
@@ -520,41 +561,8 @@ Rectangle {
              anchors.leftMargin: 0
              anchors.topMargin: 1
              anchors.fill: parent
-             onClicked:{ flipable.flipped = !flipable.flipped
-                 startFlag = !startFlag
-                 if(startFlag == true)
-                 {
-                     indicatorAnimateFocus.stop()               // stop indicator animation
-                     dialEffectStop.stop()                      // stop dial animation
-                     dialEffectStart.start()                    // start dial effect animation
-                     indicatorAnimatedDim.start()               // startindictor effect animation
-                     rpmAndspeedUpdate.running = true           // start rpmAndspeedUpdate timer
-                     digitalSpeedUpdate.running = true          // start digitalSpeedUpdate timer
-                     dummyAnimation.start()
-                 }
-                 if(startFlag == false)
-                 {
-                     dialEffectStart.stop()                     // stop dial effect animation
-                     indicatorAnimatedDim.stop()                // stop indicator animation
-                     indicatorAnimateFocus.start()              // start indicator focus annimation
-                     dialEffectStop.start()                     // start dial effect stop animation
-                     rpmAndspeedUpdate.running = false
-                     digitalSpeedUpdate.running = true
-                     dummyAnimation.stop()
-                      leftTurn.running = false
-                     rightTurn.running = false
-                     rpm_dial.value = 0
-                     speed_dial.value = 0
-                     rpmValue = 0
-                     speedValue = 0
-                     oil.visible = 0
-                     fuelLeak.visible = 0
-                     brake.visible = 0
-                     battery.visible = 0
-                 }
-
-                rpmOverlay.visible = startFlag
-                 speedOverlay.visible = startFlag
+             onClicked:{
+                 startStopAnimation();
              }
          }
      }
