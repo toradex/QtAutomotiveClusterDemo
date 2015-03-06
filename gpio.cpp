@@ -175,13 +175,18 @@ void GpioOnOff::run()
         if (duty > maxduty)
             duty = maxduty;
 
+        if (servo_state != SERVO_STATE_END)
+        {
+            st_gpio_value << "1";
+            st_gpio_value.flush();
+            usleep(duty);
+            st_gpio_value << "0";
+            st_gpio_value.flush();
+            usleep(period-duty);
+        }
+        else
+            usleep(period);
 
-        st_gpio_value << "1";
-        st_gpio_value.flush();
-        usleep(duty);
-        st_gpio_value << "0";
-        st_gpio_value.flush();
-        usleep(period-duty);
 
         switch (servo_state)
         {
@@ -200,14 +205,18 @@ void GpioOnOff::run()
 
         case SERVO_STATE_CCW:
             deg = 0;
-            /* Wait for two seconds */
-            if (count > 100)
+            /* Wait for 0.2 seconds */
+            if (count > 10)
                 servo_state = SERVO_STATE_END;
 
             break;
         case SERVO_STATE_END:
-            mccsendstart();
-            servo_state = SERVO_STATE_CW;
+            /* Wait for two seconds */
+            if (count > 100)
+            {
+                mccsendstart();
+                servo_state = SERVO_STATE_CW;
+            }
             break;
         default:
             /* Auto restart... */

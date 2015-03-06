@@ -6,6 +6,7 @@
 #include <QStringList>
 #include <QDebug>
 #include <QProcess>
+#include <QTimer>
 
 #define CPU_INFO_FILE "/proc/stat"
 

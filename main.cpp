@@ -7,6 +7,7 @@
 #include <QTimer>
 #include <QProcess>
 #include <QTime>
+#include <QWSServer>
 #include "cpuinfo.h"
 #include "gpio.h"
 
@@ -17,7 +18,7 @@ int main(int argc, char *argv[])
     int ret;
 
 	QApplication a(argc, argv);
-	QDeclarativeView view, graphView;
+    QDeclarativeView view;
 
     CpuInfo cpuInfo;
     view.rootContext()->setContextProperty("cpuInfo", &cpuInfo);
@@ -37,6 +38,13 @@ int main(int argc, char *argv[])
     view.setSource(QUrl::fromLocalFile(branch.toLatin1() + "/QtAutomotiveClusterDemoDesign/qml_800x480.qml"));	// qml.qml is main page
 
 #endif
+
+    //hide the cursor as we use touchscreen
+    QWSServer *server = QWSServer::instance();
+    if(server) {
+        server->setCursorVisible(false);
+    }
+
 	//view.setWindowFlags(Qt::FramelessWindowHint | Qt::Window);					// this statement can make the window frameless
     view.showFullScreen();
 	//w.showMaximized();
